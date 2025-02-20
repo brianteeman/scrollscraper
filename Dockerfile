@@ -148,3 +148,4 @@ RUN touch /var/opt/scrollscraper/final_outputs/gif_info.csv
 RUN touch /var/opt/scrollscraper/intermediate_outputs/augmented_color_analysis_with_verses.csv
 RUN touch /var/opt/scrollscraper/final_outputs/map.csv
 ENV IS_DOCKER=1
+ENV PERL5LIB=/var/opt/scrollscraper/cgi-bin

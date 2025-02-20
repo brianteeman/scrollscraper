@@ -1,11 +1,10 @@
 BUILDSTAMP_FILE = docker-buildstamp
 IMAGE = scrollscraper
 ARCH := $(shell uname -m)
-ifeq ($(ARCH), arm64))
- DOCKER = lima nerdctl
-else
- DOCKER = docker
-endif
+DOCKER.x86_64 := docker
+DOCKER.arm64 := lima nerdctl
+DOCKER := ${DOCKER.${ARCH}}
+$(info "Using ${DOCKER}")
 
 .PHONY: all
 all: $(BUILDSTAMP_FILE)

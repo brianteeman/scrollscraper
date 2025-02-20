@@ -79,7 +79,7 @@ test-scrollscraper.html: final_outputs/map.csv final_outputs/gif_info.csv
 	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=32&startv=35&endc=32&endv=45&dontUseCache=1&trueTypeFonts=1" >../$@)
 
 test-scrollscraper-exodus40.html: final_outputs/map.csv final_outputs/gif_info.csv
-	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=0&doShading=on&startc=40&startv=5endc=40&endv=10&dontUseCache=1&trueTypeFonts=1" >../$@)
+	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=0&doShading=on&startc=40&startv=5&endc=40&endv=10&dontUseCache=1&trueTypeFonts=1" >../$@)
 
 test-scrollscraper.mp3: cgi-bin/buildmp3.cgi
 	mkdir -p scrollscraperWorkingDir smil

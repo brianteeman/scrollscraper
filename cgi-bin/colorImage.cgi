@@ -13,11 +13,12 @@ use LWP::Simple;
 
 my @colors = ( "132/132/255", "100/46/201" );
 
-my $baseURL = "http://bible.ort.org/"
-  ; # hard-code this to avoid people use this as a way to arbitary recode any GIF on the Internet
+my $baseURL = "http://bible.ort.org/";
+my $baseURL = "";
+   # hard-code this to avoid people use this as a way to arbitary recode any GIF on the Internet
 
 my $usage =
-    "Usage: " 
+    "Usage: "
   . $0
   . " gif-relative-to-bible-ort-org-webmedia comma-delimited-coloring";
 
@@ -39,8 +40,11 @@ else {
     $coloring = shift or die $usage;
 }
 @coloring = split /,/, $coloring;
-my $theurl = $baseURL . $thegif;
-my $gifdata = get($theurl) or die "Unable to download $theurl";
+my $thegifpath = "/var/opt/scrollscraper/" . $thegif;
+open my $fh, '<', "$thegifpath" or die "Can't open file $thegifpath";
+binmode $fh;
+my $gifdata = do { local $/; <$fh> };
+# my $gifdata = open($theurl) or die "Unable to download $theurl";
 
 my $image = GD::Image->newFromGifData($gifdata);
 
@@ -101,7 +105,7 @@ if ( $coloring[0] eq 'shade' ) {
 }
 else {
     my %alreadyModified;
-    
+
     foreach my $color (@colors) {
         my @arr = split /\//,$color;
         my @thecoloring = ();
@@ -136,15 +140,6 @@ sub notClose {
       ( $a1[0] - $a2[0] )**2 + ( $a1[1] - $a2[1] )**2 + ( $a1[2] - $a2[2] )**2;
     return $dist >
       $thresh;    # 5400 corresponds to a distance of ~70, since 70*70 = 4900
-}
-
-# TODO: this function is very unreliable as of 7/30/09
-sub tagTikkunRegionsByColorFromURL {
-    my ($theurl) = @_;
-
-    my $gifdata = get($theurl) or die "Unable to download $theurl";
-
-    return tagTikkunRegionsByColor($gifdata);
 }
 
 sub tagTikkunRegionsByColor {
@@ -256,5 +251,3 @@ sub determineColor {
     $retval = 'NONE' unless defined($retval);
     return $retval;
 }
-
-

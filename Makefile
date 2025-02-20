@@ -23,8 +23,8 @@ test: $(BUILDSTAMP_FILE)
 test-exodus40: $(BUILDSTAMP_FILE)
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-exodus40.html; cat test-scrollscraper-exodus40.html"
 
-test-scrollscraper-alt-coloring: $(BUILDSTAMP_FILE)
-	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-exodus40.html; cat test-scrollscraper-exodus40.html"
+test-alt-coloring: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-alt-coloring.html; cat test-scrollscraper-alt-coloring.html"
 
 test-mp3: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil

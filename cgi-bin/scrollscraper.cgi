@@ -30,6 +30,7 @@ use Data::Dumper;
 my $execution_path = $0;
 
 my $fontFile = "fonts/SILEOTSR.ttf";
+my $ourWebFontFile = "/fonts/SILEOTSR.ttf";
 my $GIF_INFO_CSV = "final_outputs/gif_info.csv";
 my $MAP_CSV = "final_outputs/map.csv";
 
@@ -634,7 +635,7 @@ if ($trueTypeFonts) {
     print $cacheOutRef "<style type=\"text/css\">\n";
     print $cacheOutRef "\@font-face {\n";
     print $cacheOutRef "     font-family: \"hebrewFont\"\;";
-    print $cacheOutRef "     src: url(\"$fontFile\")\;\n";
+    print $cacheOutRef "     src: url(\"$ourWebFontFile\")\;\n";
     print $cacheOutRef "}\n";
 
     my @colors = ( "132,132,255", "100,46,201" );

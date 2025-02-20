@@ -104,7 +104,7 @@ RUN pyenv install $PYTHON_VERSION
 RUN pyenv local $PYTHON_VERSION
 
 # Text-to-speech for ScrollScraper's buildmp3.cgi
-RUN pip install gTTS
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org gTTS
 
 
 # Google Drive downloader for some large files which don't fit in free Github
@@ -137,7 +137,6 @@ COPY utilities/generateSampleTorahMap.pl /var/opt/scrollscraper/utilities/
 COPY otherComputedPNGs/sampleTorahMap.png /var/opt/scrollscraper/otherComputedPNGs/
 ADD Makefile /var/opt/scrollscraper
 ADD *.html /var/opt/scrollscraper
-ADD *.pm /var/opt/scrollscraper
 ADD *.txt /var/opt/scrollscraper
 ADD *.gif /var/opt/scrollscraper
 ADD *.mp3 /var/opt/scrollscraper

@@ -2,9 +2,12 @@ BUILDSTAMP_FILE = docker-buildstamp
 IMAGE = scrollscraper
 ARCH := $(shell uname -m)
 DOCKER.x86_64 := docker
-DOCKER.arm64 := lima nerdctl
+DOCKER.arm64 := podman
 DOCKER := ${DOCKER.${ARCH}}
-$(info "Using ${DOCKER}")
+DOCKER_FLAG.x86_64 := 
+DOCKER_FLAG.arm64 := --arch=amd64
+DOCKER_FLAG := ${DOCKER_FLAG.${ARCH}}
+$(info "Using ${DOCKER} with flag ${DOCKER_FLAG}")
 
 .PHONY: all
 all: $(BUILDSTAMP_FILE)
@@ -12,7 +15,7 @@ all: $(BUILDSTAMP_FILE)
 run-webserver: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
-	$(DOCKER) run -p 8080:80 -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) python3 -m http.server --cgi 80
+	$(DOCKER) run $(DOCKER_FLAG) -p 8080:80 -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) python3 -m http.server --cgi 80
 
 test: $(BUILDSTAMP_FILE)
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.html; cat test-scrollscraper.html"
@@ -20,23 +23,23 @@ test: $(BUILDSTAMP_FILE)
 test-mp3: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.mp3"
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.mp3"
 
 test-sedrot: cgi-bin/sedrot.cgi $(BUILDSTAMP_FILE)
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-sedrot.count.txt"
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-sedrot.count.txt"
 
 clean-dataprep: $(BUILDSTAMP_FILE)
-	$(DOCKER) run -w /var/opt/scrollscraper -t $(IMAGE) /bin/bash -c "cd scrollscraper; make clean-scrollscraper-data; make test-scrollscraper.html"
+	$(DOCKER) run $(DOCKER_FLAG) -w /var/opt/scrollscraper -t $(IMAGE) /bin/bash -c "cd scrollscraper; make clean-scrollscraper-data; make test-scrollscraper.html"
 
 $(BUILDSTAMP_FILE): Dockerfile cgi-bin/scrollscraper.cgi cgi-bin/buildmp3.cgi Makefile
-	$(DOCKER) build -t $(IMAGE) .
+	$(DOCKER) build $(DOCKER_FLAG) -t $(IMAGE) .
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
 	touch $@
 
 download-mp3s:
 	mkdir -p local_ort_mp3s
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -w /var/opt/scrollscraper -i -t scrollscraper /bin/bash -x utilities/fetchMP3s.sh
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -w /var/opt/scrollscraper -i -t scrollscraper /bin/bash -x utilities/fetchMP3s.sh
 	touch $@
 
 clean:

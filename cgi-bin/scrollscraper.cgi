@@ -76,6 +76,7 @@ if ( $execution_path =~ /^\/?cgi-bin\//) {
     $smilBase  = "../smil/";
 }
 $smilBase = "/state/smil/" if $ENV{"IS_DOCKER"};
+$shadingDir = "../ScrollScraperalphaPNGs" if $ENV{"IS_DOCKER"};
 
 my $usage =
   "Usage: " . $0 . " book startchapter startverse endchapter endverse";

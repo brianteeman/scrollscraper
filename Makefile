@@ -20,6 +20,9 @@ run-webserver: download-mp3s $(BUILDSTAMP_FILE)
 test: $(BUILDSTAMP_FILE)
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.html; cat test-scrollscraper.html"
 
+test-exodus40: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-exodus40.html; cat test-scrollscraper-exodus40.html"
+
 test-mp3: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
@@ -74,6 +77,9 @@ otherComputedPNGs/sampleTorahMap.png: utilities/generateSampleTorahMap.pl final_
 
 test-scrollscraper.html: final_outputs/map.csv final_outputs/gif_info.csv
 	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=32&startv=35&endc=32&endv=45&dontUseCache=1&trueTypeFonts=1" >../$@)
+
+test-scrollscraper-exodus40.html: final_outputs/map.csv final_outputs/gif_info.csv
+	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=0&doShading=on&startc=40&startv=5endc=40&endv=10&dontUseCache=1&trueTypeFonts=1" >../$@)
 
 test-scrollscraper.mp3: cgi-bin/buildmp3.cgi
 	mkdir -p scrollscraperWorkingDir smil

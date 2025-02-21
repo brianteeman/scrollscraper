@@ -14,9 +14,11 @@ my $fileMethod = 0;
 my $qDir = "/home/ec2-user/scrollscraperWorkingDir";
 $qDir = "./scrollscraperWorkingDir" if $ENV{"IS_DOCKER"};
 
-if ( $execution_path =~ /^\/?cgi-bin\// && $ENV{"IS_DOCKER"}) {
-    $base = " ../scrollscraperWorkingDir";
-}
+#warn "DELETEME About to set qdir execution_path $execution_path";
+#if ( $execution_path =~ /\/?cgi-bin\// && $ENV{"IS_DOCKER"}) {
+#    $qDir = " ../scrollscraperWorkingDir";
+#    warn "DELETEME Setting qdir";
+#}
 
 # my $lame = "/home/jepstein/lame-3.97/frontend/lame"; # use "lame" for WAV->MP3 conversion
 # my $sox = "/home/jepstein/mplayerExperiments/sox-13.0.0/src/sox";
@@ -185,6 +187,11 @@ my $tmpdir = "/tmp/$$" . "_mp3_scrollscraper";
 
 my $effortRequired = ($#raFiles+1) * $audioRepeatCount;
 my $scriptfname = $ENV{"REMOTE_ADDR"} . "_" . $effortRequired . "_" . "$$.sh";
+
+my $thisDir=`pwd`;
+chomp $thisDir;
+warn "DELETEME thisDir $thisDir";
+
 open THESCRIPT,">$qDir/$scriptfname" or die "Unable to open output file $qDir/$scriptfname";
 if ($httpStyle) {
         print "HTTP/1.1 202 Accepted\n";

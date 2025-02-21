@@ -72,7 +72,7 @@ my $lame =
 
 my $cachebase = "./cache/";
 my $smilBase  = "./smil/";
-if ( $execution_path =~ /^\/?cgi-bin\//) {
+if ( $execution_path =~ /\/?cgi-bin\//) {
     $cachebase = "../cache/";
     $smilBase  = "../smil/";
 }

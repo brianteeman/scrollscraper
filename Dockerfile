@@ -120,6 +120,9 @@ RUN mkdir scrollscraper/ScrollScraperalphaPNGs
 RUN mkdir scrollscraper/otherComputedPNGs
 RUN mkdir scrollscraper/webmedia
 RUN mkdir scrollscraper/cgi-bin
+RUN mkdir scrollscraper/scrollscraperWorkingDir
+RUN chmod 777 scrollscraper/scrollscraperWorkingDir
+RUN chmod 755 /root
 ADD data/webmedia.tgz /var/opt/scrollscraper/webmedia
 COPY data/entire_torah.json /var/opt/scrollscraper/data
 COPY ScrollScraperalphaPNGs/* /var/opt/scrollscraper/ScrollScraperalphaPNGs
@@ -149,3 +152,5 @@ RUN touch /var/opt/scrollscraper/intermediate_outputs/augmented_color_analysis_w
 RUN touch /var/opt/scrollscraper/final_outputs/map.csv
 ENV IS_DOCKER=1
 ENV PERL5LIB=/var/opt/scrollscraper/cgi-bin
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8

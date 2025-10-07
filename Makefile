@@ -79,7 +79,10 @@ clean-scrollscraper-data:
 	rm -f intermediate_outputs/* final_outputs/*
 
 otherComputedPNGs/sampleTorahMap.png: utilities/generateSampleTorahMap.pl final_outputs/map.csv
-	grep t2/1601C101.gif final_outputs/map.csv |  perl utilities/generateSampleTorahMap.pl >$@
+	grep t2/1601C101.gif final_outputs/map.csv | perl utilities/generateSampleTorahMap.pl >$@
+
+otherComputedPNGs/sampleTorahMapDeut3411.png: utilities/generateSampleTorahMap.pl final_outputs/map.csv
+	grep t5/3411C110.gif final_outputs/map.csv | perl utilities/generateSampleTorahMap.pl >$@
 
 test-scrollscraper.html: final_outputs/map.csv final_outputs/gif_info.csv
 	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=32&startv=35&endc=32&endv=45&dontUseCache=1&trueTypeFonts=1" >../$@)
@@ -96,7 +99,6 @@ test-scrollscraper-alt-coloring.html: final_outputs/map.csv final_outputs/gif_in
 
 
 
-test-scrollscraper-exodus40.html: final_outputs/map.csv final_outputs/gif_info.csv
 test-scrollscraper.mp3: cgi-bin/buildmp3.cgi
 	mkdir -p scrollscraperWorkingDir smil
 	touch smil/daystampAndLock.txt

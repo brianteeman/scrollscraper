@@ -24,6 +24,7 @@ test-exodus40: $(BUILDSTAMP_FILE)
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-exodus40.html; cat test-scrollscraper-exodus40.html"
 
 test-deuteronomy34: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make otherComputedPNGs/sampleTorahMapDeut3411.png | base64"
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-deuteronomy34.html; cat test-scrollscraper-deuteronomy34.html"
 
 test-alt-coloring: $(BUILDSTAMP_FILE)

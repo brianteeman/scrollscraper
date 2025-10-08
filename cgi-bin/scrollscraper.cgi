@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# Copyright 2006-2009 by Jonathan Epstein (jonathan.epstein@adatshalom.net)
+# Copyright 2006-2025 by Jonathan Epstein (jonathan.epstein@adatshalom.net)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -683,7 +683,7 @@ if ($trueTypeFonts) {
 
     for ( my $gifIndex = $firstGIFIndex-$maximumVerseLengthInGIFs ;
         $gifIndex <= $finalGIFIndex+$maximumVerseLengthInGIFs ; $gifIndex++ ) {
-        next if ($gifIndex < 0 || $gifIndex >= $#filenames);
+        next if ($gifIndex < 0 || $gifIndex > $#filenames);
         $_ = $filenames[$gifIndex];
         s/\/webmedia\///;
         my $strippedGIFname = $_;

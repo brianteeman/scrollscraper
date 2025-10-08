@@ -18,6 +18,7 @@
 # handheld device.
 #
 use strict;
+use utf8::all;
 use LWP::Simple;
 use HTML::TokeParser;
 use GD;

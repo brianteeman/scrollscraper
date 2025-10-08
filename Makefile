@@ -92,7 +92,7 @@ test-scrollscraper-exodus40.html: final_outputs/map.csv final_outputs/gif_info.c
 	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=0&doShading=on&startc=40&startv=5&endc=40&endv=10&dontUseCache=1&trueTypeFonts=1" >../$@)
 
 test-scrollscraper-deuteronomy34.html: final_outputs/map.csv final_outputs/gif_info.csv
-	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=34&startv=10&endc=34&endv=12&dontUseCache=1&trueTypeFonts=1" >../$@)
+	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=34&startv=9&endc=34&endv=12&dontUseCache=1&trueTypeFonts=1" >../$@)
 
 test-scrollscraper-alt-coloring.html: final_outputs/map.csv final_outputs/gif_info.csv
 	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=25%2C25%2C112%2C25%2C25%2C112&doShading=on&startc=25&startv=1&endc=25&endv=15" >../$@)

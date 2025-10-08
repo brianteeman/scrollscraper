@@ -47,6 +47,9 @@ RUN cpanm Net::SSLeay \
  IO::Socket::SSL \
  LWP::Protocol::https
 
+# Let's try this one separately too
+RUN cpanm utf8::all
+
 RUN apt-get install --yes \
  libarchive-zip-perl
 

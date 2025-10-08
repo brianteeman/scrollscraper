@@ -18,6 +18,7 @@
 # handheld device.
 #
 use strict;
+use utf8::all;
 use LWP::Simple;
 use HTML::TokeParser;
 use GD;
@@ -30,6 +31,7 @@ use Data::Dumper;
 my $execution_path = $0;
 
 my $fontFile = "fonts/SILEOTSR.ttf";
+my $ourWebFontFile = "/fonts/SILEOTSR.ttf";
 my $GIF_INFO_CSV = "final_outputs/gif_info.csv";
 my $MAP_CSV = "final_outputs/map.csv";
 
@@ -71,11 +73,12 @@ my $lame =
 
 my $cachebase = "./cache/";
 my $smilBase  = "./smil/";
-if ( $execution_path =~ /^\/?cgi-bin\//) {
+if ( $execution_path =~ /\/?cgi-bin\//) {
     $cachebase = "../cache/";
     $smilBase  = "../smil/";
 }
 $smilBase = "/state/smil/" if $ENV{"IS_DOCKER"};
+$shadingDir = "../ScrollScraperalphaPNGs" if $ENV{"IS_DOCKER"};
 
 my $usage =
   "Usage: " . $0 . " book startchapter startverse endchapter endverse";
@@ -264,7 +267,7 @@ my @versesPerChapter = (
     [
         22, 25, 22, 31, 23, 30, 29, 28, 35, 29, 10, 51, 22, 31,
         27, 36, 16, 27, 25, 23, 37, 30, 33, 18, 40, 37, 21, 43,
-        46, 38, 18, 35, 23, 35, 35, 38, 29, 31, 43
+        46, 38, 18, 35, 23, 35, 35, 38, 29, 31, 43, 38
     ],
     [
         17, 16, 17, 35, 26, 23, 38, 36, 24, 20, 47, 8,  59, 57,
@@ -633,7 +636,7 @@ if ($trueTypeFonts) {
     print $cacheOutRef "<style type=\"text/css\">\n";
     print $cacheOutRef "\@font-face {\n";
     print $cacheOutRef "     font-family: \"hebrewFont\"\;";
-    print $cacheOutRef "     src: url(\"$fontFile\")\;\n";
+    print $cacheOutRef "     src: url(\"$ourWebFontFile\")\;\n";
     print $cacheOutRef "}\n";
 
     my @colors = ( "132,132,255", "100,46,201" );
@@ -1117,6 +1120,18 @@ sub partitionHebrewVerse {
     # function partitionHebrewVerse().   ptSize is used, but its influence
     # "washes out" over the course of the calculations
     my $ptSize = 24;
+
+    # In Deuteronomy 34:11 we saw a case where a verse which began pretty late in the
+    # line yielded too many words to actually fit on that line, and consequently illegible
+    # output.  So let's delicately try to reduce the incidence of that occurring, while
+    # trying to minimize the impact of this hack, elsewhere in the sefer Torah.
+    my $avoidSmushingTooMuchIntoShortFirstLine = 0.3;
+    my $smushPenalty = 0.07;
+    # if (this is a short first line)
+    if ((1.0 * $prefixPixelWidths[0]) / $gifWidth < $avoidSmushingTooMuchIntoShortFirstLine) {
+       $prefixPixelWidths[0] = int($prefixPixelWidths[0] * (1 - $smushPenalty));
+       #print "Applied smushing penalty, new value is " . $prefixPixelWidths[0] . "\n";
+    }
 
     my @retval;
 

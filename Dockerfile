@@ -47,6 +47,9 @@ RUN cpanm Net::SSLeay \
  IO::Socket::SSL \
  LWP::Protocol::https
 
+# Let's try this one separately too
+RUN cpanm utf8::all
+
 RUN apt-get install --yes \
  libarchive-zip-perl
 
@@ -104,7 +107,7 @@ RUN pyenv install $PYTHON_VERSION
 RUN pyenv local $PYTHON_VERSION
 
 # Text-to-speech for ScrollScraper's buildmp3.cgi
-RUN pip install gTTS
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org gTTS
 
 
 # Google Drive downloader for some large files which don't fit in free Github
@@ -120,6 +123,9 @@ RUN mkdir scrollscraper/ScrollScraperalphaPNGs
 RUN mkdir scrollscraper/otherComputedPNGs
 RUN mkdir scrollscraper/webmedia
 RUN mkdir scrollscraper/cgi-bin
+RUN mkdir scrollscraper/scrollscraperWorkingDir
+RUN chmod 777 scrollscraper/scrollscraperWorkingDir
+RUN chmod 755 /root
 ADD data/webmedia.tgz /var/opt/scrollscraper/webmedia
 COPY data/entire_torah.json /var/opt/scrollscraper/data
 COPY ScrollScraperalphaPNGs/* /var/opt/scrollscraper/ScrollScraperalphaPNGs
@@ -137,7 +143,6 @@ COPY utilities/generateSampleTorahMap.pl /var/opt/scrollscraper/utilities/
 COPY otherComputedPNGs/sampleTorahMap.png /var/opt/scrollscraper/otherComputedPNGs/
 ADD Makefile /var/opt/scrollscraper
 ADD *.html /var/opt/scrollscraper
-ADD *.pm /var/opt/scrollscraper
 ADD *.txt /var/opt/scrollscraper
 ADD *.gif /var/opt/scrollscraper
 ADD *.mp3 /var/opt/scrollscraper
@@ -149,3 +154,6 @@ RUN touch /var/opt/scrollscraper/final_outputs/gif_info.csv
 RUN touch /var/opt/scrollscraper/intermediate_outputs/augmented_color_analysis_with_verses.csv
 RUN touch /var/opt/scrollscraper/final_outputs/map.csv
 ENV IS_DOCKER=1
+ENV PERL5LIB=/var/opt/scrollscraper/cgi-bin
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8

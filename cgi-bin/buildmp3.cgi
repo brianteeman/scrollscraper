@@ -14,9 +14,11 @@ my $fileMethod = 0;
 my $qDir = "/home/ec2-user/scrollscraperWorkingDir";
 $qDir = "./scrollscraperWorkingDir" if $ENV{"IS_DOCKER"};
 
-if ( $execution_path =~ /^\/?cgi-bin\// && $ENV{"IS_DOCKER"}) {
-    $base = " ../scrollscraperWorkingDir";
-}
+#warn "DELETEME About to set qdir execution_path $execution_path";
+#if ( $execution_path =~ /\/?cgi-bin\// && $ENV{"IS_DOCKER"}) {
+#    $qDir = " ../scrollscraperWorkingDir";
+#    warn "DELETEME Setting qdir";
+#}
 
 # my $lame = "/home/jepstein/lame-3.97/frontend/lame"; # use "lame" for WAV->MP3 conversion
 # my $sox = "/home/jepstein/mplayerExperiments/sox-13.0.0/src/sox";
@@ -60,7 +62,7 @@ my $maxFetches = 200; # safety valve;
 # Derived from bible.ort.org.   Note that both the King James bible and Machon Mamre differ from this!
 my @versesPerChapter = (
 [31,25,24,26,32,22,24,22,29,32,32,20,18,24,21,17,27,33,38,18,34,24,20,67,34,35,46,22,35,43,54,33,20,31,29,43,36,30,23,23,57,38,34,34,28,34,31,22,33,26],
-[22,25,22,31,23,30,29,28,35,29,10,51,22,31,27,36,16,27,25,23,37,30,33,18,40,37,21,43,46,38,18,35,23,35,35,38,29,31,43],
+[22,25,22,31,23,30,29,28,35,29,10,51,22,31,27,36,16,27,25,23,37,30,33,18,40,37,21,43,46,38,18,35,23,35,35,38,29,31,43,38],
 [17,16,17,35,26,23,38,36,24,20,47,8,59,57,33,34,16,30,37,27,24,33,44,23,55,46,34],
 [54,34,51,49,31,27,89,26,23,36,35,16,33,45,41,35,28,32,22,29,35,41,30,25,18,65,23,31,39,17,54,42,56,29,34,13],
 [46,37,29,49,30,25,26,20,29,22,32,31,19,29,23,22,20,22,21,20,23,29,26,22,19,19,26,69,28,20,30,52,29,12],
@@ -185,6 +187,11 @@ my $tmpdir = "/tmp/$$" . "_mp3_scrollscraper";
 
 my $effortRequired = ($#raFiles+1) * $audioRepeatCount;
 my $scriptfname = $ENV{"REMOTE_ADDR"} . "_" . $effortRequired . "_" . "$$.sh";
+
+my $thisDir=`pwd`;
+chomp $thisDir;
+warn "DELETEME thisDir $thisDir";
+
 open THESCRIPT,">$qDir/$scriptfname" or die "Unable to open output file $qDir/$scriptfname";
 if ($httpStyle) {
         print "HTTP/1.1 202 Accepted\n";

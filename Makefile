@@ -1,11 +1,13 @@
 BUILDSTAMP_FILE = docker-buildstamp
 IMAGE = scrollscraper
 ARCH := $(shell uname -m)
-ifeq ($(ARCH), arm64))
- DOCKER = lima nerdctl
-else
- DOCKER = docker
-endif
+DOCKER.x86_64 := docker
+DOCKER.arm64 := podman
+DOCKER := ${DOCKER.${ARCH}}
+DOCKER_FLAG.x86_64 := 
+DOCKER_FLAG.arm64 := --arch=amd64
+DOCKER_FLAG := ${DOCKER_FLAG.${ARCH}}
+$(info "Using ${DOCKER} with flag ${DOCKER_FLAG}")
 
 .PHONY: all
 all: $(BUILDSTAMP_FILE)
@@ -13,31 +15,41 @@ all: $(BUILDSTAMP_FILE)
 run-webserver: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
-	$(DOCKER) run -p 8080:80 -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) python3 -m http.server --cgi 80
+	$(DOCKER) run $(DOCKER_FLAG) -p 8080:80 -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) python3 -m http.server --cgi 80
 
 test: $(BUILDSTAMP_FILE)
 	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.html; cat test-scrollscraper.html"
 
+test-exodus40: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-exodus40.html; cat test-scrollscraper-exodus40.html"
+
+test-deuteronomy34: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make otherComputedPNGs/sampleTorahMapDeut3411.png; cat otherComputedPNGs/sampleTorahMapDeut3411.png | base64"
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-deuteronomy34.html; cat test-scrollscraper-deuteronomy34.html"
+
+test-alt-coloring: $(BUILDSTAMP_FILE)
+	$(DOCKER) run -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper-alt-coloring.html; cat test-scrollscraper-alt-coloring.html"
+
 test-mp3: download-mp3s $(BUILDSTAMP_FILE)
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.mp3"
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-scrollscraper.mp3"
 
 test-sedrot: cgi-bin/sedrot.cgi $(BUILDSTAMP_FILE)
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-sedrot.count.txt"
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -v `pwd`/state:/state -w /var/opt/scrollscraper -i -t $(IMAGE) /bin/bash -c "make test-sedrot.count.txt"
 
 clean-dataprep: $(BUILDSTAMP_FILE)
-	$(DOCKER) run -w /var/opt/scrollscraper -t $(IMAGE) /bin/bash -c "cd scrollscraper; make clean-scrollscraper-data; make test-scrollscraper.html"
+	$(DOCKER) run $(DOCKER_FLAG) -w /var/opt/scrollscraper -t $(IMAGE) /bin/bash -c "cd scrollscraper; make clean-scrollscraper-data; make test-scrollscraper.html"
 
 $(BUILDSTAMP_FILE): Dockerfile cgi-bin/scrollscraper.cgi cgi-bin/buildmp3.cgi Makefile
-	$(DOCKER) build -t $(IMAGE) .
+	$(DOCKER) build $(DOCKER_FLAG) -t $(IMAGE) .
 	mkdir -p state/smil
 	touch state/smil/daystampAndLock.txt
 	touch $@
 
 download-mp3s:
 	mkdir -p local_ort_mp3s
-	$(DOCKER) run -v `pwd`/local_ort_mp3s:/ort_mp3s -w /var/opt/scrollscraper -i -t scrollscraper /bin/bash -x utilities/fetchMP3s.sh
+	$(DOCKER) run $(DOCKER_FLAG) -v `pwd`/local_ort_mp3s:/ort_mp3s -w /var/opt/scrollscraper -i -t scrollscraper /bin/bash -x utilities/fetchMP3s.sh
 	touch $@
 
 clean:
@@ -68,10 +80,25 @@ clean-scrollscraper-data:
 	rm -f intermediate_outputs/* final_outputs/*
 
 otherComputedPNGs/sampleTorahMap.png: utilities/generateSampleTorahMap.pl final_outputs/map.csv
-	grep t2/1601C101.gif final_outputs/map.csv |  perl utilities/generateSampleTorahMap.pl >$@
+	grep t2/1601C101.gif final_outputs/map.csv | perl utilities/generateSampleTorahMap.pl >$@
+
+otherComputedPNGs/sampleTorahMapDeut3411.png: utilities/generateSampleTorahMap.pl final_outputs/map.csv
+	grep t5/3411C110.gif final_outputs/map.csv | perl utilities/generateSampleTorahMap.pl >$@
 
 test-scrollscraper.html: final_outputs/map.csv final_outputs/gif_info.csv
 	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=32&startv=35&endc=32&endv=45&dontUseCache=1&trueTypeFonts=1" >../$@)
+
+test-scrollscraper-exodus40.html: final_outputs/map.csv final_outputs/gif_info.csv
+	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=0&doShading=on&startc=40&startv=5&endc=40&endv=10&dontUseCache=1&trueTypeFonts=1" >../$@)
+
+test-scrollscraper-deuteronomy34.html: final_outputs/map.csv final_outputs/gif_info.csv
+	(cd cgi-bin; perl scrollscraper.cgi "book=5&audioRepeatCount=1&coloring=0&doShading=on&startc=34&startv=11&endc=34&endv=12&dontUseCache=1&trueTypeFonts=1" >../$@)
+
+test-scrollscraper-alt-coloring.html: final_outputs/map.csv final_outputs/gif_info.csv
+	(cd cgi-bin; perl scrollscraper.cgi "book=2&audioRepeatCount=1&coloring=25%2C25%2C112%2C25%2C25%2C112&doShading=on&startc=25&startv=1&endc=25&endv=15" >../$@)
+
+
+
 
 test-scrollscraper.mp3: cgi-bin/buildmp3.cgi
 	mkdir -p scrollscraperWorkingDir smil

@@ -1121,6 +1121,18 @@ sub partitionHebrewVerse {
     # "washes out" over the course of the calculations
     my $ptSize = 24;
 
+    # In Deuteronomy 34:11 we saw a case where a verse which began pretty late in the
+    # line yielded too many words to actually fit on that line, and consequently illegible
+    # output.  So let's delicately try to reduce the incidence of that occurring, while
+    # trying to minimize the impact of this hack, elsewhere in the sefer Torah.
+    my $avoidSmushingTooMuchIntoShortFirstLine = 0.3;
+    my $smushPenalty = 0.07;
+    # if (this is a short first line)
+    if ((1.0 * $prefixPixelWidths[0]) / $gifWidth < $avoidSmushingTooMuchIntoShortFirstLine) {
+       $prefixPixelWidths[0] = int($prefixPixelWidths[0] * (1 - $smushPenalty));
+       #print "Applied smushing penalty, new value is " . $prefixPixelWidths[0] . "\n";
+    }
+
     my @retval;
 
     my $totalPixelWidth = 0;

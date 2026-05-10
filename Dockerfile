@@ -44,7 +44,8 @@ RUN cpanm CPAN::Meta \
   Digest::SHA \
   Module::Build \
   ExtUtils::MakeMaker \
-  LWP::Simple
+  LWP::Simple \
+  CGI
 
 # Install separately as before — SSL deps benefit from a clean layer
 RUN cpanm Net::SSLeay \

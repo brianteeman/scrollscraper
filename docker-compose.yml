@@ -1,0 +1,12 @@
+services:
+  scrollscraper:
+    image: scrollscraper
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ${MP3_DIR:-./local_ort_mp3s}:/ort_mp3s
+      - ${STATE_DIR:-./state}:/state
+      - ${WORK_DIR:-./scrollscraperWorkingDir}:/var/opt/scrollscraper/scrollscraperWorkingDir
+    working_dir: /var/opt/scrollscraper
+    command: python3 -m http.server --cgi 80

@@ -77,12 +77,12 @@ RUN chmod 777 scrollscraper/scrollscraperWorkingDir && chmod 755 /root
 
 ADD data/webmedia.tgz /var/opt/scrollscraper/webmedia
 COPY data/entire_torah.json /var/opt/scrollscraper/data
-COPY ScrollScraperalphaPNGs/* /var/opt/scrollscraper/ScrollScraperalphaPNGs
-COPY intermediate_outputs/* /var/opt/scrollscraper/intermediate_outputs
-COPY final_outputs/* /var/opt/scrollscraper/final_outputs
-COPY fonts/* /var/opt/scrollscraper/fonts
-COPY cgi-bin/*.cgi /var/opt/scrollscraper/cgi-bin
-COPY cgi-bin/*.pm /var/opt/scrollscraper/cgi-bin
+COPY ScrollScraperalphaPNGs/* /var/opt/scrollscraper/ScrollScraperalphaPNGs/
+COPY intermediate_outputs/* /var/opt/scrollscraper/intermediate_outputs/
+COPY final_outputs/* /var/opt/scrollscraper/final_outputs/
+COPY fonts/* /var/opt/scrollscraper/fonts/
+COPY cgi-bin/*.cgi /var/opt/scrollscraper/cgi-bin/
+COPY cgi-bin/*.pm /var/opt/scrollscraper/cgi-bin/
 COPY utilities/gifETL.pl /var/opt/scrollscraper/utilities/
 COPY utilities/gifETL2.pl /var/opt/scrollscraper/utilities/
 COPY utilities/gifETL3.pl /var/opt/scrollscraper/utilities/

@@ -90,12 +90,12 @@ COPY utilities/handCuration.sed /var/opt/scrollscraper/utilities/
 COPY utilities/fetchMP3s.sh /var/opt/scrollscraper/utilities/
 COPY utilities/generateSampleTorahMap.pl /var/opt/scrollscraper/utilities/
 COPY otherComputedPNGs/sampleTorahMap.png /var/opt/scrollscraper/otherComputedPNGs/
-ADD Makefile /var/opt/scrollscraper
-ADD *.html /var/opt/scrollscraper
-ADD *.txt /var/opt/scrollscraper
-ADD *.gif /var/opt/scrollscraper
-ADD *.mp3 /var/opt/scrollscraper
-ADD *.GIF /var/opt/scrollscraper
+ADD Makefile /var/opt/scrollscraper/
+ADD *.html /var/opt/scrollscraper/
+ADD *.txt /var/opt/scrollscraper/
+ADD *.gif /var/opt/scrollscraper/
+ADD *.mp3 /var/opt/scrollscraper/
+ADD *.GIF /var/opt/scrollscraper/
 
 RUN chmod 755 /var/opt/scrollscraper/cgi-bin/*.cgi
 

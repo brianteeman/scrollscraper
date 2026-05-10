@@ -25,11 +25,15 @@ docker build -t scrollscraper .
 
 The first build takes 10–15 minutes. Subsequent rebuilds are faster due to layer caching.
 
-## 3. Create the state directory
+## 3. Create persistent directories on the host
 
 ```bash
+# Rate-limiting state + generated MP3 cache
 mkdir -p /var/opt/scrollscraper-state/smil
 touch /var/opt/scrollscraper-state/smil/daystampAndLock.txt
+
+# buildmp3.cgi shell-script working directory
+mkdir -p /var/opt/scrollscraper-workdir
 ```
 
 ## 4. Configure the environment
@@ -38,11 +42,12 @@ touch /var/opt/scrollscraper-state/smil/daystampAndLock.txt
 cp .env.example .env
 ```
 
-Edit `.env` and set both variables for production:
+Edit `.env` and set all three variables for production:
 
 ```
 MP3_DIR=/srv/www/scrollscraper.adatshalom.net/public_html/ORT_MP3s.recoded
 STATE_DIR=/var/opt/scrollscraper-state
+WORK_DIR=/var/opt/scrollscraper-workdir
 ```
 
 ## 5. Start the container

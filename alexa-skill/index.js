@@ -690,6 +690,24 @@ function buildResponse(options) {
   return response;
 }
 
+function numToWords(n) {
+  const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+                'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
+                'seventeen', 'eighteen', 'nineteen'];
+  const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+  if (n < 20) return ones[n];
+  const t = Math.floor(n / 10);
+  const o = n % 10;
+  return tens[t] + (o ? '-' + ones[o] : '');
+}
+
+function handleWhenIsParshaReadIntent(request, context, session) {
+  context.succeed(buildResponse({
+    speechText: "The weekly parsha schedule is not yet available in this skill. Please check your synagogue's website for the current reading schedule.",
+    endSession: true
+  }));
+}
+
 function handleLaunchRequest(context) {
   let options = {};
   options.speechText =  "Welcome to the Scroll Scraper skill. Using our skill you can listen to and practice your scheduled Torah reading."
@@ -740,19 +758,21 @@ function handleChantIntent(request,context) {
       [numOmittedVerses,numVersesUsed,options.audioString] = chaptersAndVerses2AudioString(bookValue,startc,startv,endc,endv);
 
       if (numOmittedVerses > 0) {
-          options.speechText = "This is a truncated excerpt of " + numVersesUsed + " verses from " + bookName +  ", Chapter " + startc;
+          options.speechText = "This is a truncated excerpt of " + numVersesUsed + " verses from " + bookName +  ", Chapter " + numToWords(startc);
       } else {
-          options.speechText = "This is an excerpt from " + bookName +  ", Chapter " + startc;
+          options.speechText = "This is an excerpt from " + bookName +  ", Chapter " + numToWords(startc);
       }
       if (startc === endc) {
-          options.speechText += " verses " + startv + " through " + endv;
+          options.speechText += " verses " + numToWords(startv) + " through " + numToWords(endv);
       } else {
-          options.speechText += " verse " + startv + " through chapter " + endc + " verse " + endv;
+          options.speechText += " verse " + numToWords(startv) + " through chapter " + numToWords(endc) + " verse " + numToWords(endv);
       }
       options.speechText += ". The following recorded materials are copyright world-ORT, 1997, all rights reserved.";
       options.cardContent = scrollscraperURL;
-    
-      // test value for now
+
+      // TODO (#15): replace with the first GIF for the requested passage, looked up from gif_info.csv.
+      // The GIF filename encodes the scroll column number which can't be derived from
+      // book/chapter/verse alone without consulting the ETL output data.
       options.imageUrl = "https://scrollscraper.adatshalom.net/colorImage.cgi?thegif=/webmedia/t1/0103C111.gif&coloring=0,0,0,0,0,0";
   }
 

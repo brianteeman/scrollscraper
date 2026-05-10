@@ -205,11 +205,11 @@ if ($httpStyle) {
 
 
 # generate speech synthesis
-my $tts = "This is an excerpt from " . getBookName($book) . ", Chapter $startc, "; # it would be nice to include the Parsha, but the pronounciation is too poor
+my $tts = "This is an excerpt from " . getBookName($book) . ", Chapter " . num_to_words($startc) . ", "; # it would be nice to include the Parsha, but the pronounciation is too poor
 if ($startc != $endc) {
-	$tts .= "verse $startv through chapter $endc verse $endv.";
+	$tts .= "verse " . num_to_words($startv) . " through chapter " . num_to_words($endc) . " verse " . num_to_words($endv) . ".";
 } else {
-	$tts .= "verses $startv through $endv.";
+	$tts .= "verses " . num_to_words($startv) . " through " . num_to_words($endv) . ".";
 }
 
 $tts .= "  The following recorded materials are copyright world-ORT, nineteen ninety-seven, all rights reserved.";
@@ -306,6 +306,18 @@ system("/bin/sh $qDir/$scriptfname");
 my($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size, $atime,$lastMtime,$ctime,$blksize,$blocks) = stat($audioFileName);
 recordFileSize($size,$ENV{'REMOTE_ADDR'},$dayStampFile,$ipDatabase);
 
+
+sub num_to_words {
+	my $n = shift;
+	my @ones = ('', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+	            'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
+	            'seventeen', 'eighteen', 'nineteen');
+	my @tens = ('', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety');
+	return $ones[$n] if $n < 20;
+	my $t = int($n / 10);
+	my $o = $n % 10;
+	return $tens[$t] . ($o ? '-' . $ones[$o] : '');
+}
 
 sub rangeToFileName {
 	my ($cachebase, $book,$startc,$startv,$endc,$endv,$flags,$audioRepeatCount) = @_;
